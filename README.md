@@ -1,5 +1,7 @@
 # Docker Guacamole
 
+**THIS REPO IS A CONTINUATION OF [oznu/docker-guacamole](https://github.com/oznu/docker-guacamole).**
+
 A Docker Container for [Apache Guacamole](https://guacamole.apache.org/), a client-less remote desktop gateway. It supports standard protocols like VNC, RDP, and SSH over HTML5.
 
 This image will run on most platforms that support Docker including Docker for Mac, Docker for Windows, Synology DSM and Raspberry Pi 3 boards.
