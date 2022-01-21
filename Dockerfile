@@ -3,10 +3,14 @@ FROM library/tomcat:9-jre11
 ENV ARCH=amd64 \
   GUAC_VER=1.4.0 \
   GUACAMOLE_HOME=/app/guacamole \
-  PG_MAJOR=13 \
+  PG_MAJOR=9.6 \
   PGDATA=/config/postgres \
   POSTGRES_USER=guacamole \
   POSTGRES_DB=guacamole_db
+
+# Add Postgres Repository
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
+RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add - 
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
