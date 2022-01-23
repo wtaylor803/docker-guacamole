@@ -16,18 +16,18 @@ This container runs the guacamole web client, the guacd server and a postgres da
 docker run \
   -p 8080:8080 \
   -v </path/to/config>:/config \
-  oznu/guacamole
+  jwetzell/guacamole
 ```
 
-## Raspberry Pi / ARMv6
+## Raspberry Pi / ARMv7
 
-This image will also allow you to run [Apache Guacamole](https://guacamole.apache.org/) on a Raspberry Pi or other Docker-enabled ARMv5/6/7/8 devices by using the `armhf` tag.
+This image will also allow you to run [Apache Guacamole](https://guacamole.apache.org/) on a Raspberry Pi or other Docker-enabled ARMv5/6/7/8 devices by using the `arm32v7` tag.
 
 ```shell
 docker run \
   -p 8080:8080 \
   -v </path/to/config>:/config \
-  oznu/guacamole:armhf
+  jwetzell/guacamole:arm32v7
 ```
 
 ## Parameters
@@ -49,7 +49,7 @@ docker run \
   -p 8080:8080 \
   -v </path/to/config>:/config \
   -e "EXTENSIONS=auth-ldap,auth-duo"
-  oznu/guacamole
+  jwetzell/guacamole
 ```
 
 Currently the available extensions are:
@@ -76,7 +76,7 @@ Mapped volumes behave differently when running Docker for Windows and you may en
 version: "2"
 services:
   guacamole:
-    image: oznu/guacamole
+    image: jwetzell/guacamole
     container_name: guacamole
     volumes:
       - postgres:/config
@@ -86,11 +86,3 @@ volumes:
   postgres:
     driver: local
 ```
-
-## License
-
-Copyright (C) 2017-2020 oznu
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the [GNU General Public License](./LICENSE) for more details.
