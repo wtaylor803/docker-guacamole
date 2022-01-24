@@ -1,19 +1,20 @@
 FROM library/tomcat:9-jre11
 
 ENV ARCH=amd64 \
-  GUAC_VER=1.4.0 \
-  GUACAMOLE_HOME=/app/guacamole \
-  PG_MAJOR=9.6 \
-  PGDATA=/config/postgres \
-  POSTGRES_USER=guacamole \
-  POSTGRES_DB=guacamole_db
+    GUAC_VER=1.4.0 \
+    GUACAMOLE_HOME=/app/guacamole \
+    PG_MAJOR=9.6 \
+    PGDATA=/config/postgres \
+    POSTGRES_USER=guacamole \
+    POSTGRES_DB=guacamole_db
 
 # Add Postgres Repository
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
-RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add - 
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main" >> /etc/apt/sources.list.d/pgdg.list && \
+    wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update \
+ && apt-get install -y \
     libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libossp-uuid-dev libavcodec-dev libavutil-dev \
     libswscale-dev freerdp2-dev libfreerdp-client2-2 libpango1.0-dev \
@@ -25,9 +26,9 @@ RUN apt-get update && apt-get install -y \
 
 # Apply the s6-overlay
 ADD https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-${ARCH}.tar.gz /tmp
-RUN tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C /
-RUN tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C /usr ./bin
-RUN rm -rf /tmp/s6-overlay-${ARCH}.tar.gz
+RUN tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C / \
+ && tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C /usr ./bin \
+ && rm -rf /tmp/s6-overlay-${ARCH}.tar.gz
 
 RUN mkdir -p ${GUACAMOLE_HOME} \
     ${GUACAMOLE_HOME}/lib \
@@ -43,14 +44,14 @@ RUN echo $PATH
 
 # Install guacamole-server
 RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/source/guacamole-server-${GUAC_VER}.tar.gz" \
-  && tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
-  && cd guacamole-server-${GUAC_VER} \
-  && ./configure --enable-allow-freerdp-snapshots \
-  && make -j$(getconf _NPROCESSORS_ONLN) \
-  && make install \
-  && cd .. \
-  && rm -rf guacamole-server-${GUAC_VER}.tar.gz guacamole-server-${GUAC_VER} \
-  && ldconfig
+ && tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
+ && cd guacamole-server-${GUAC_VER} \
+ && ./configure --enable-allow-freerdp-snapshots \
+ && make -j$(getconf _NPROCESSORS_ONLN) \
+ && make install \
+ && cd .. \
+ && rm -rf guacamole-server-${GUAC_VER}.tar.gz guacamole-server-${GUAC_VER} \
+ && ldconfig
 
 # Install guacamole-client and postgres auth adapter
 RUN set -x \

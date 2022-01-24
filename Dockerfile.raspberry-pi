@@ -1,17 +1,16 @@
 FROM arm32v7/tomcat:9-jre11
 
 ENV ARCH=armhf \
-  GUAC_VER=1.4.0 \
-  GUACAMOLE_HOME=/app/guacamole \
-  PG_MAJOR=9.6 \
-  PGDATA=/config/postgres \
-  POSTGRES_USER=guacamole \
-  POSTGRES_DB=guacamole_db
+    GUAC_VER=1.4.0 \
+    GUACAMOLE_HOME=/app/guacamole \
+    PG_MAJOR=9.6 \
+    PGDATA=/config/postgres \
+    POSTGRES_USER=guacamole \
+    POSTGRES_DB=guacamole_db
 
-# Install dependencies
-RUN apt-get update
-
-RUN apt-get install -y --allow-unauthenticated \
+# Install base dependencies
+RUN apt-get update \ 
+ && apt-get install -y --allow-unauthenticated \
     libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libossp-uuid-dev libavcodec-dev libavutil-dev \
     libswscale-dev freerdp2-dev libfreerdp-client2-2 libpango1.0-dev \
@@ -24,9 +23,9 @@ RUN apt-get install -y postgresql-${PG_MAJOR}
 
 # Apply the s6-overlay
 ADD https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-${ARCH}.tar.gz /tmp
-RUN tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C /
-RUN tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C /usr ./bin
-RUN rm -rf /tmp/s6-overlay-${ARCH}.tar.gz
+RUN tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C / \
+ && tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C /usr ./bin \
+ && rm -rf /tmp/s6-overlay-${ARCH}.tar.gz
 
 RUN mkdir -p ${GUACAMOLE_HOME} \
     ${GUACAMOLE_HOME}/lib \
@@ -51,19 +50,19 @@ RUN curl -SLOk "http://apache.org/dyn/closer.cgi?action=download&filename=guacam
 
 # Install guacamole-client and postgres auth adapter
 RUN set -x \
-  && rm -rf ${CATALINA_HOME}/webapps/ROOT \
-  && curl -SLko ${CATALINA_HOME}/webapps/ROOT.war "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${GUAC_VER}.war" \
-  && curl -SLko ${GUACAMOLE_HOME}/lib/postgresql-42.1.4.jar "https://jdbc.postgresql.org/download/postgresql-42.2.24.jar" \
-  && curl -SLkO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-auth-jdbc-${GUAC_VER}.tar.gz" \
-  && tar -xzf guacamole-auth-jdbc-${GUAC_VER}.tar.gz \
-  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/guacamole-auth-jdbc-postgresql-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions/ \
-  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/schema ${GUACAMOLE_HOME}/ \
-  && rm -rf guacamole-auth-jdbc-${GUAC_VER} guacamole-auth-jdbc-${GUAC_VER}.tar.gz
+ && rm -rf ${CATALINA_HOME}/webapps/ROOT \
+ && curl -SLko ${CATALINA_HOME}/webapps/ROOT.war "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${GUAC_VER}.war" \
+ && curl -SLko ${GUACAMOLE_HOME}/lib/postgresql-42.1.4.jar "https://jdbc.postgresql.org/download/postgresql-42.2.24.jar" \
+ && curl -SLkO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-auth-jdbc-${GUAC_VER}.tar.gz" \
+ && tar -xzf guacamole-auth-jdbc-${GUAC_VER}.tar.gz \
+ && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/guacamole-auth-jdbc-postgresql-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions/ \
+ && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/schema ${GUACAMOLE_HOME}/ \
+ && rm -rf guacamole-auth-jdbc-${GUAC_VER} guacamole-auth-jdbc-${GUAC_VER}.tar.gz
 
 # Add optional extensions
 RUN set -xe \
-  && mkdir ${GUACAMOLE_HOME}/extensions-available \
-  && for i in auth-ldap auth-duo auth-header auth-cas auth-openid auth-quickconnect auth-totp; do \
+ && mkdir ${GUACAMOLE_HOME}/extensions-available \
+ && for i in auth-ldap auth-duo auth-header auth-cas auth-openid auth-quickconnect auth-totp; do \
     echo "https://dlcdn.apache.org/guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && curl -SLOk "https://dlcdn.apache.org/guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && tar -xzf guacamole-${i}-${GUAC_VER}.tar.gz \
