@@ -1,3 +1,5 @@
+![Docker Pulls](https://img.shields.io/docker/pulls/jwetzell/guacamole?label=pulls) ![Docker Stars](https://img.shields.io/docker/stars/jwetzell/guacamole?label=stars)
+
 # Docker Guacamole
 
 **THIS REPO IS A CONTINUATION OF [oznu/docker-guacamole](https://github.com/oznu/docker-guacamole).**
