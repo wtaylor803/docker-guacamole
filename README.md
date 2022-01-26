@@ -1,4 +1,4 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/jwetzell/guacamole?label=pulls) ![Docker Stars](https://img.shields.io/docker/stars/jwetzell/guacamole?label=stars)
+[![Docker Pulls](https://img.shields.io/docker/pulls/jwetzell/guacamole?label=pulls) ![Docker Stars](https://img.shields.io/docker/stars/jwetzell/guacamole?label=stars)](https://hub.docker.com/r/jwetzell/guacamole)
 
 # Docker Guacamole
 
