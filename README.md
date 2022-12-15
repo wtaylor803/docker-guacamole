@@ -1,8 +1,6 @@
-[![Docker Pulls](https://img.shields.io/docker/pulls/jwetzell/guacamole?label=pulls) ![Docker Stars](https://img.shields.io/docker/stars/jwetzell/guacamole?label=stars)](https://hub.docker.com/r/jwetzell/guacamole)
+# Docker Guacamole for ICANotes
 
-# Docker Guacamole
-
-**THIS REPO IS A CONTINUATION OF [oznu/docker-guacamole](https://github.com/oznu/docker-guacamole).**
+**THIS REPO IS A CONTINUATION OF [jwetzell/docker-guacamole](https://github.com/jwetzell/docker-guacamole).**
 
 A Docker Container for [Apache Guacamole](https://guacamole.apache.org/), a client-less remote desktop gateway. It supports standard protocols like VNC, RDP, and SSH over HTML5.
 
