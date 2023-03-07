@@ -1,7 +1,7 @@
 FROM library/tomcat:9-jre11-openjdk-bullseye
 
 ENV ARCH=amd64 \
-    GUAC_VER=1.4.0 \
+    GUAC_VER=1.5.0 \
     GUACAMOLE_HOME=/app/guacamole \
     PG_MAJOR=9.6 \
     PGDATA=/config/postgres \
@@ -9,13 +9,14 @@ ENV ARCH=amd64 \
     POSTGRES_DB=guacamole_db
 
 # Add Postgres Repository
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main" >> /etc/apt/sources.list.d/pgdg.list && \
-    wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
+RUN apt-get update && apt-get install -y curl ca-certificates gnupg
+RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg > /dev/null
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
 
 # Install dependencies
 RUN apt-get update \
  && apt-get install -y \
-    libcairo2-dev libjpeg62-turbo-dev libpng-dev \
+    libcairo2-dev libjpeg62-turbo-dev libpng-dev libavformat-dev libwebsockets-dev\
     libossp-uuid-dev libavcodec-dev libavutil-dev \
     libswscale-dev freerdp2-dev libfreerdp-client2-2 libpango1.0-dev \
     libssh2-1-dev libtelnet-dev libvncserver-dev \
@@ -70,7 +71,7 @@ RUN set -x \
   && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/schema ${GUACAMOLE_HOME}/ \
   && rm -rf guacamole-auth-jdbc-${GUAC_VER} guacamole-auth-jdbc-${GUAC_VER}.tar.gz
 
-
+# add auth-sso to available extensions folder structur differs from other extensions
 RUN set -xe \
   && echo "https://dlcdn.apache.org/guacamole/${GUAC_VER}/binary/guacamole-auth-sso-${GUAC_VER}.tar.gz" \
   && curl -SLO "https://dlcdn.apache.org/guacamole/${GUAC_VER}/binary/guacamole-auth-sso-${GUAC_VER}.tar.gz" \
@@ -80,10 +81,17 @@ RUN set -xe \
   && cp guacamole-auth-sso-${GUAC_VER}/saml/guacamole-auth-sso-saml-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions-available/ \
   && rm -rf guacamole-auth-sso-${GUAC_VER} guacamole-auth-sso-${GUAC_VER}.tar.gz
 
+# add vault to available extensions folder structur differs from other extensions
+RUN set -xe \
+  && echo "https://dlcdn.apache.org/guacamole/${GUAC_VER}/binary/guacamole-vault-${GUAC_VER}.tar.gz" \
+  && curl -SLO "https://dlcdn.apache.org/guacamole/${GUAC_VER}/binary/guacamole-vault-${GUAC_VER}.tar.gz" \
+  && tar -xzf guacamole-vault-${GUAC_VER}.tar.gz \
+  && cp guacamole-vault-${GUAC_VER}/ksm/guacamole-vault-ksm-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions-available/ \
+  && rm -rf guacamole-vault-${GUAC_VER} guacamole-vault-${GUAC_VER}.tar.gz
 
 # Add optional extensions
 RUN set -xe \
-  && for i in auth-duo auth-header auth-json auth-ldap auth-quickconnect auth-totp; do \
+  && for i in auth-duo auth-header auth-json auth-ldap auth-quickconnect auth-totp history-recording-storage; do \
     echo "https://dlcdn.apache.org/guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && curl -SLO "https://dlcdn.apache.org/guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && tar -xzf guacamole-${i}-${GUAC_VER}.tar.gz \
