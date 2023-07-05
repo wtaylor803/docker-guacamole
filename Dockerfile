@@ -100,7 +100,7 @@ RUN set -xe \
   ;done
  
 # Install ldap auth to extensions
-RUN cp ${GUACAMOLE_HOME}/extensions-available/guacamole-auth-ldap-${GUAC_VER}.jar /config/guacamole/extensions/
+RUN cp ${GUACAMOLE_HOME}/extensions-available/guacamole-auth-ldap-${GUAC_VER}.jar /config/guacamole/extensions
 
 ENV PATH=/usr/lib/postgresql/${PG_MAJOR}/bin:$PATH
 ENV GUACAMOLE_HOME=/config/guacamole
