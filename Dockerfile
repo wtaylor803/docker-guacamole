@@ -6,7 +6,8 @@ ENV ARCH=amd64 \
     PG_MAJOR=9.6 \
     PGDATA=/config/postgres \
     POSTGRES_USER=guacamole \
-    POSTGRES_DB=guacamole_db
+    POSTGRES_DB=guacamole_db \
+    EXTENSIONS=auth-ldap
 
 # Add Postgres Repository
 RUN apt-get update && apt-get install -y curl ca-certificates gnupg
