@@ -21,7 +21,7 @@ RUN apt-get update \
     libswscale-dev freerdp2-dev libfreerdp-client2-2 libpango1.0-dev \
     libssh2-1-dev libtelnet-dev libvncserver-dev \
     libpulse-dev libssl-dev libvorbis-dev libwebp-dev libwebsockets-dev \
-    ghostscript build-essential postgresql-${PG_MAJOR} \
+    ghostscript build-essential postgresql-${PG_MAJOR} ldap-utils vim \
   && rm -rf /var/lib/apt/lists/*
 
 
